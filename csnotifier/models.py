@@ -12,11 +12,12 @@ class DeviceManager(models.Manager):
     def enabled(self):
         return super(DeviceManager, self).get_queryset().filter(enabled=True)
     
-    def search(self, tags_string):
+    def search(self, target_notification):
         # Pre django code
         match = []
+        tags_string = target_notification.getTags()
         filter_elements =  tags_string.split(',')
-        for device in Device.objecst.enabled():
+        for device in Device.objects.enabled():
             add_to_match = True
             for elem in filter_elements:
                 if elem not in device.getTags():
@@ -84,12 +85,20 @@ class Notification(models.Model):
 
     def getData(self):
         return self.data
+
+    def getExtra(self):
+        return self.extra_context or {}
     
-    def sendNotification(notification):
-        if notification.isSent() is False:
+    def send(self):
+        if self.isSent() is False:
             devices_token = set()
-            devices = Device.objects.search(notification)
+            devices = Device.objects.search(self)
             for device in devices:
                 devices_token.add(device.getToken())
-            send_request(list(devices_token), notification)
-            notification.setSent()
+            status = send_request(list(devices_token), self)
+            if status is True:
+                self.setSent()
+
+    def save(self, *args, **kwargs):
+        super(Notification, self).save(*args, **kwargs)
+        self.send()
