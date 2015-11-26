@@ -24,6 +24,6 @@ def send_request(devices, notification):
     payload = json.dumps(_create_message(devices, notification))
     response = requests.post(URL, payload.encode('utf8'), headers=headers)    
     if response and response.status_code == 200:
-        return True
+        return response.json()
     else:
-        return False
+        return {}

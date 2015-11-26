@@ -1,4 +1,5 @@
 import uuid
+import json
 from django.db import models
 from .notifications import send_request
 
@@ -62,6 +63,9 @@ class Notification(models.Model):
     tags = models.TextField(blank=True, null=True)
     sent = models.BooleanField(default=False)
     data = models.DateTimeField(auto_now_add=True)
+    pw_status = models.SmallIntegerField(null=True, blank=True)
+    pw_status_message = models.CharField(max_length=255, null=True, blank=True)
+    pw_response = models.TextField(blank=True, null=True)
     
     def getTitle(self):
         return self.title
@@ -96,8 +100,13 @@ class Notification(models.Model):
             for device in devices:
                 devices_token.add(device.getToken())
             status = send_request(list(devices_token), self)
-            if status is True:
+            self.pw_status = status.get('status_code')
+            self.pw_status_message = status.get('status_message')
+            self.pw_response = json.dumps(status.get('response'))                                        
+            if self.pw_status == 200:
                 self.setSent()
+            
+            
 
     def save(self, *args, **kwargs):
         super(Notification, self).save(*args, **kwargs)
