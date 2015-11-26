@@ -104,10 +104,11 @@ class Notification(models.Model):
             self.pw_status_message = status.get('status_message')
             self.pw_response = json.dumps(status.get('response'))                                        
             if self.pw_status == 200:
-                self.setSent()
-            
-            
+                self.sent = True
+        return self
 
     def save(self, *args, **kwargs):
+        if self.isSent() is False:
+            self.send()
         super(Notification, self).save(*args, **kwargs)
-        self.send()
+
