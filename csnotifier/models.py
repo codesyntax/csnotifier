@@ -5,8 +5,6 @@ from .notifications import send_request
 
 class DeviceManager(models.Manager):
     def register_device(self, token):
-        import pdb;pdb.set_trace()
-        
         device_id = uuid.uuid4().get_hex().replace('-','')
         device = Device.objects.create(uuid=device_id,
                                        token=token)
