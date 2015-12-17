@@ -4,7 +4,9 @@ from django.db import models
 from .notifications import send_request
 
 class DeviceManager(models.Manager):
-    def register_device(self,token):
+    def register_device(self, token):
+        import pdb;pdb.set_trace()
+        
         device_id = uuid.uuid4().get_hex().replace('-','')
         device = Device.objects.create(uuid=device_id,
                                        token=token)
@@ -90,8 +92,20 @@ class Notification(models.Model):
     def getData(self):
         return self.data
 
+    def setExtra(self, data_dict):
+        try:
+            to_json = json.dumps(data_dict)
+        except:
+            to_json = ''
+        self.extra_context = to_json
+        self.save()
+        
     def getExtra(self):
-        return self.extra_context or {}
+        try:
+            load_context = json.loads(self.extra_data)
+        except:
+            load_context = {}
+        return load_context
     
     def send(self):
         if self.isSent() is False:
