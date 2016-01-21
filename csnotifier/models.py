@@ -27,7 +27,7 @@ class DeviceManager(models.Manager):
             if add_to_match:
                 match.append(device)
         return match
-    
+
 class Device(models.Model):
     uuid = models.CharField(max_length=32, primary_key=True)
     token = models.CharField(max_length=250)
@@ -54,6 +54,9 @@ class Device(models.Model):
 
     def getUuid(self):
         return self.uuid
+    
+    def __unicode__(self):
+        return self.uuid    
     
     objects = DeviceManager()
     
