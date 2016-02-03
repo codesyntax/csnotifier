@@ -24,6 +24,7 @@ class DeviceManager(models.Manager):
             add_to_match = True
             d_tags = device.getTags()
             if d_tags == u'':
+                match.append(device)
                 continue
             for elem in filter_elements:
                 if elem not in device.getTags():
