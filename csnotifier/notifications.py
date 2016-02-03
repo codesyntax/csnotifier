@@ -26,9 +26,6 @@ def send_request(devices, notification):
     response = requests.post(URL, payload.encode('utf8'), headers=headers)
         
     if response and response.status_code == 200:
-        notification.pw_response = response.json()
-        notification.sent  = True
-        notification.save()
         return response.json()
     else:
         return {}

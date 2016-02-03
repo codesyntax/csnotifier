@@ -22,6 +22,9 @@ class DeviceManager(models.Manager):
         filter_elements =  tags_string.split(',')
         for device in Device.objects.enabled():
             add_to_match = True
+            d_tags = device.getTags()
+            if d_tags == u'':
+                continue
             for elem in filter_elements:
                 if elem not in device.getTags():
                     add_to_match = False
@@ -116,12 +119,14 @@ class Notification(models.Model):
             devices = Device.objects.search(self)
             for device in devices:
                 devices_token.add(device.getToken())
-            status = send_request(list(devices_token), self)
-            self.pw_status = status.get('status_code')
-            self.pw_status_message = status.get('status_message')
-            self.pw_response = json.dumps(status.get('response'))                                        
-            if self.pw_status == 200:
-                self.sent = True
+            if len(devices_token) > 0:
+                status = send_request(list(devices_token), self)
+                self.pw_status = status.get('status_code')
+                self.pw_status_message = status.get('status_message')
+                self.pw_response = json.dumps(status.get('response'))                                        
+                if self.pw_status == 200:
+                    self.sent = True
+                self.save()
         return self
 """
     def save(self, *args, **kwargs):
