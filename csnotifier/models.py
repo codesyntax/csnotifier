@@ -17,6 +17,8 @@ class DeviceManager(models.Manager):
         # Pre django code
         match = []
         tags_string = target_notification.getTags()
+        if tags_string is None:
+            return list(Device.objects.enabled())
         filter_elements =  tags_string.split(',')
         for device in Device.objects.enabled():
             add_to_match = True
@@ -74,7 +76,7 @@ class Notification(models.Model):
         return self.title
 
     def setTags(self, tag_string):
-        self.tag = tag_string
+        self.tags = tag_string
         self.save()
         
     def getTags(self):
@@ -103,7 +105,7 @@ class Notification(models.Model):
         
     def getExtra(self):
         try:
-            load_context = json.loads(self.extra_data)
+            load_context = json.loads(self.extra_context)
         except:
             load_context = {}
         return load_context
@@ -121,9 +123,9 @@ class Notification(models.Model):
             if self.pw_status == 200:
                 self.sent = True
         return self
-
+"""
     def save(self, *args, **kwargs):
         if self.isSent() is False:
             self.send()
         super(Notification, self).save(*args, **kwargs)
-
+"""

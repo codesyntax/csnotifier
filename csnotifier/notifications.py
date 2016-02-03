@@ -22,8 +22,13 @@ def send_request(devices, notification):
     URL = u'https://cp.pushwoosh.com/json/1.3/createMessage'
     headers = {'Content-Type': 'application/json'}
     payload = json.dumps(_create_message(devices, notification))
-    response = requests.post(URL, payload.encode('utf8'), headers=headers)    
+    
+    response = requests.post(URL, payload.encode('utf8'), headers=headers)
+        
     if response and response.status_code == 200:
+        notification.pw_response = response.json()
+        notification.sent  = True
+        notification.save()
         return response.json()
     else:
         return {}
