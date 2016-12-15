@@ -1,6 +1,7 @@
 import uuid
 import json
 from django.db import models
+from django.contrib.auth.models import User
 from .notifications import send_request
 
 class DeviceManager(models.Manager):
@@ -37,6 +38,7 @@ class DeviceManager(models.Manager):
 class Device(models.Model):
     uuid = models.CharField(max_length=32, primary_key=True)
     token = models.CharField(max_length=250)
+    user = models.ForeignKey(User, blank=True, null=True)
     tags = models.TextField()
     enabled = models.BooleanField(default=True)
         
@@ -68,6 +70,7 @@ class Device(models.Model):
     
 class Notification(models.Model):
     title = models.CharField(max_length=50)
+    desc = models.CharField(max_length=250, blank=True, null=True)
     extra_context = models.TextField(blank=True, null=True)
     tags = models.TextField(blank=True, null=True)
     sent = models.BooleanField(default=False)
@@ -78,6 +81,9 @@ class Notification(models.Model):
     
     def getTitle(self):
         return self.title
+
+    def getDesc(self):
+        return self.desc
 
     def setTags(self, tag_string):
         self.tags = tag_string
@@ -122,9 +128,14 @@ class Notification(models.Model):
                 devices_token.add(device.getToken())
             if len(devices_token) > 0:
                 status = send_request(list(devices_token), self)
-                self.pw_status = status.get('status_code')
-                self.pw_status_message = status.get('status_message')
-                self.pw_response = json.dumps(status.get('response'))                                        
+
+                if 'status_code' in status:
+                    self.pw_status = status.get('status_code')
+                    self.pw_status_message = status.get('status_message')
+                    self.pw_response = json.dumps(status.get('response'))
+                else:
+                    self.pw_status = status.get('success') == 1 and 200 or None 
+                    self.pw_response = status                                      
                 if self.pw_status == 200:
                     self.sent = True
                 self.save()
