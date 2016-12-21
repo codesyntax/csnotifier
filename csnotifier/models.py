@@ -134,7 +134,7 @@ class Notification(models.Model):
                     self.pw_status_message = status.get('status_message')
                     self.pw_response = json.dumps(status.get('response'))
                 else:
-                    self.pw_status = status.get('success') == 1 and 200 or None 
+                    self.pw_status = status.get('success') >= 1 and 200 or None 
                     self.pw_response = status                                      
                 if self.pw_status == 200:
                     self.sent = True
