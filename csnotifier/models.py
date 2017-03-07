@@ -10,29 +10,26 @@ class DeviceManager(models.Manager):
         device = Device.objects.create(uuid=device_id,
                                        token=token)
         return device
-    
+
     def enabled(self):
         return super(DeviceManager, self).get_queryset().filter(enabled=True)
-    
+
     def search(self, target_notification):
         # Pre django code
         match = []
         tags_string = target_notification.getTags()
         if tags_string is None:
             return list(Device.objects.enabled())
-        filter_elements =  tags_string.split(',')
+        filter_elements = tags_string.split(',')
         for device in Device.objects.enabled():
-            add_to_match = True
+
             d_tags = device.getTags()
             if d_tags == u'':
                 match.append(device)
                 continue
             for elem in filter_elements:
-                if elem not in device.getTags():
-                    add_to_match = False
-                    break
-            if add_to_match:
-                match.append(device)
+                if elem in device.getTags() and device not in match:
+                    match.append(device)
         return match
 
 class Device(models.Model):
@@ -41,7 +38,7 @@ class Device(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     tags = models.TextField()
     enabled = models.BooleanField(default=True)
-        
+
     def disableNotifications(self):
         self.enabled = False
         self.save()
@@ -53,7 +50,7 @@ class Device(models.Model):
     def setStatus(self, status):
         self.enabled = status
         self.save()
-        
+
     def getTags(self):
         return self.tags
 
@@ -62,12 +59,12 @@ class Device(models.Model):
 
     def getUuid(self):
         return self.uuid
-    
+
     def __unicode__(self):
-        return self.uuid    
-    
+        return self.uuid
+
     objects = DeviceManager()
-    
+
 class Notification(models.Model):
     title = models.CharField(max_length=50)
     desc = models.CharField(max_length=250, blank=True, null=True)
@@ -78,7 +75,7 @@ class Notification(models.Model):
     pw_status = models.SmallIntegerField(null=True, blank=True)
     pw_status_message = models.CharField(max_length=255, null=True, blank=True)
     pw_response = models.TextField(blank=True, null=True)
-    
+
     def getTitle(self):
         return self.title
 
@@ -88,7 +85,7 @@ class Notification(models.Model):
     def setTags(self, tag_string):
         self.tags = tag_string
         self.save()
-        
+
     def getTags(self):
         return self.tags
 
@@ -98,7 +95,7 @@ class Notification(models.Model):
     def setSent(self):
         self.sent = True
         self.save()
-        
+
     def isSent(self):
         return self.sent
 
@@ -112,14 +109,14 @@ class Notification(models.Model):
             to_json = ''
         self.extra_context = to_json
         self.save()
-        
+
     def getExtra(self):
         try:
             load_context = json.loads(self.extra_context)
         except:
             load_context = {}
         return load_context
-    
+
     def send(self):
         if self.isSent() is False:
             devices_token = set()
@@ -134,8 +131,8 @@ class Notification(models.Model):
                     self.pw_status_message = status.get('status_message')
                     self.pw_response = json.dumps(status.get('response'))
                 else:
-                    self.pw_status = status.get('success') >= 1 and 200 or None 
-                    self.pw_response = status                                      
+                    self.pw_status = status.get('success') >= 1 and 200 or None
+                    self.pw_response = status
                 if self.pw_status == 200:
                     self.sent = True
                 self.save()
