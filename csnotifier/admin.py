@@ -14,7 +14,7 @@ mark_as_not_sent.short_description = "Mark these notifications as NOT SENT"
 
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('title', 'tags', 'data', 'sent')
-    actions = [bidalita, bidaligabe]
+    actions = [mark_as_sent, mark_as_not_sent]
 
 
 class DeviceAdmin(admin.ModelAdmin):
