@@ -3,6 +3,7 @@ import json
 from django.db import models
 from django.contrib.auth.models import User
 from .notifications import send_request
+from datetime import datetime
 
 class DeviceManager(models.Manager):
     def register_device(self, token):
@@ -38,6 +39,8 @@ class Device(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     tags = models.TextField()
     enabled = models.BooleanField(default=True)
+    added = models.DateTimeField(auto_now_add=True, blank=True)
+    modified = models.DateTimeField(auto_now=True, blank=True)
 
     def disableNotifications(self):
         self.enabled = False

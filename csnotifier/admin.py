@@ -18,7 +18,8 @@ class NotificationAdmin(admin.ModelAdmin):
 
 
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('uuid', 'token', 'tags', 'enabled')
+    list_display = ('uuid', 'tags', 'enabled', 'added', 'modified')
+    ordering = ('modified',)
 
 
 
