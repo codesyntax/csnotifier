@@ -19,7 +19,7 @@ mark_as_not_sent.short_description = "Mark these notifications as NOT SENT"
 def send_to_device(modeladmin, request, queryset):
     for item in queryset:
         item.send_to_device(request.POST.get('device'))
-    
+
 send_to_device.short_description = "Send notification to a device"
 
 class NotificationAdmin(admin.ModelAdmin):
