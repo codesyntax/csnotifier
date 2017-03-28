@@ -137,6 +137,16 @@ class Notification(models.Model):
                     self.sent = True
                 self.save()
         return self
+
+    def send_to_device(self, deviceid):
+        devices = Device.objects.filter(uuid=deviceid)
+        device_tokens = []
+        for device in devices:
+            token = device.getToken()
+            device_tokens.append(token)
+        status = send_request(device_tokens, self)
+        return self
+
 """
     def save(self, *args, **kwargs):
         if self.isSent() is False:
