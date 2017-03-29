@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from .notifications import send_request
 from datetime import datetime
+from django.conf import settings
+
 
 class DeviceManager(models.Manager):
     def register_device(self, token):
@@ -36,7 +38,7 @@ class DeviceManager(models.Manager):
 class Device(models.Model):
     uuid = models.CharField(max_length=32, primary_key=True)
     token = models.CharField(max_length=250)
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
     tags = models.TextField()
     enabled = models.BooleanField(default=True)
     added = models.DateTimeField(auto_now_add=True, blank=True)
