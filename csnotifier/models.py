@@ -1,15 +1,14 @@
-import uuid
-import json
-from django.db import models
-from django.contrib.auth.models import User
 from .notifications import send_request
-from datetime import datetime
 from django.conf import settings
+from django.db import models
+
+import json
+import uuid
 
 
 class DeviceManager(models.Manager):
     def register_device(self, token):
-        device_id = uuid.uuid4().get_hex().replace('-','')
+        device_id = uuid.uuid4().get_hex().replace('-', '')
         device = Device.objects.create(uuid=device_id,
                                        token=token)
         return device
@@ -34,6 +33,7 @@ class DeviceManager(models.Manager):
                 if elem in device.getTags() and device not in match:
                     match.append(device)
         return match
+
 
 class Device(models.Model):
     uuid = models.CharField(max_length=32, primary_key=True)
@@ -69,6 +69,7 @@ class Device(models.Model):
         return self.uuid
 
     objects = DeviceManager()
+
 
 class Notification(models.Model):
     title = models.CharField(max_length=50)

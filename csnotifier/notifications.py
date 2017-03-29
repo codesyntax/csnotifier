@@ -1,12 +1,14 @@
+from django.conf import settings
+
 import json
 import requests
-from django.conf import settings
 
 PUSHWOOSH_APP_ID = getattr(settings, 'PUSHWOOSH_APP_ID', '')
 PUSHWOOSH_AUTH_TOKEN = getattr(settings, 'PUSHWOOSH_AUTH_TOKEN', '')
-PUSHWOOSH_URL = getattr(settings, 'PUSHWOOSH_URL', 'https://cp.pushwoosh.com/json/1.3/createMessage')
+PUSHWOOSH_URL = getattr(settings, 'PUSHWOOSH_URL', 'https://cp.pushwoosh.com/json/1.3/createMessage') # noqa
 FIREBASE_API_KEY = getattr(settings, 'FIREBASE_API_KEY', '')
 FIREBASE_URL = getattr(settings, 'FIREBASE_URL', '')
+
 
 def _create__pushwoosh_message(devices, notification):
     message = {
@@ -17,11 +19,12 @@ def _create__pushwoosh_message(devices, notification):
                 'send_date': 'now',
                 'content': notification.getTitle(),
                 'data': notification.getExtra(),
-                'devices' : devices
+                'devices': devices
             }]
         }
     }
     return message
+
 
 def _create__firebase_message(devices, notification):
     message = {
@@ -39,18 +42,22 @@ def send_request(devices, notification):
     if PUSHWOOSH_APP_ID:
         headers = {'Content-Type': 'application/json'}
         payload = json.dumps(_create__pushwoosh_message(devices, notification))
-        response = requests.post(PUSHWOOSH_URL, payload.encode('utf8'), headers=headers)
+        response = requests.post(
+            PUSHWOOSH_URL,
+            payload.encode('utf8'),
+            headers=headers)
     else:
         headers = {
-            'Authorization': 'key='+ FIREBASE_API_KEY,
+            'Authorization': 'key=' + FIREBASE_API_KEY,
             'Content-Type': 'application/json'
         }
         payload = json.dumps(_create__firebase_message(devices, notification))
-        response = requests.post(FIREBASE_URL, payload.encode('utf8'), headers=headers)    
+        response = requests.post(
+            FIREBASE_URL,
+            payload.encode('utf8'),
+            headers=headers)
 
     if response and response.status_code == 200:
         return response.json()
     else:
         return {}
-
-
