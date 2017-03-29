@@ -6,8 +6,8 @@ version = '0.10.dev0'
 setup(name='csnotifier',
       version=version,
       description="A product to send notifications to Pushwosh or Firebase",
-      long_description="""Notification sender form django applications""",
-      classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+      long_description=open("README.rst").read() + "\n" + open("HISTORY.txt").read(),
+      classifiers=[],
       keywords='',
       author='CodeSyntax',
       author_email='info@codesyntax.com',
