@@ -26,12 +26,17 @@ class DeviceManager(models.Manager):
         for device in Device.objects.enabled():
 
             d_tags = device.getTags()
-            if d_tags == u'':
+	    if d_tags is not None:
+                d_tags = d_tags.strip()
+            else:
+                d_tags = u''
+            if not d_tags:
+                 # if tags is an empty string, the device is subscribed to everything.
                 match.append(device)
-                continue
-            for elem in filter_elements:
-                if elem in device.getTags() and device not in match:
-                    match.append(device)
+            else:
+                for elem in filter_elements:
+                    if elem in d_tags and device not in match:
+                        match.append(device)
         return match
 
 
