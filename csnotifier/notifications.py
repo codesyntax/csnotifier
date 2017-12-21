@@ -25,13 +25,22 @@ def _create__pushwoosh_message(devices, notification):
 
 def _create__firebase_message(devices, notification):
     message = {
-        'registration_ids': devices,
-        'data': {
-            'title': notification.getTitle(),
-            'message': notification.getDesc(),
-            'content': notification.getExtra()
-        }
+        "notification": {
+            "title": notification.getTitle(),
+            "body": notification.getDesc(),
+            "sound": "default",
+            "click_action": "FCM_PLUGIN_ACTIVITY",
+            "icon": "fcm_push_icon"
+        },
+        "data": notification.getExtra(),
+        "priority": "high",
     }
+
+    if len(devices) == 1:
+        message['to'] = devices[0]
+    else:
+        message['registration_ids'] = devices
+
     return message
 
 
@@ -46,7 +55,7 @@ def send_request(devices, notification):
             'Content-Type': 'application/json'
         }
         payload = json.dumps(_create__firebase_message(devices, notification))
-        response = requests.post(FIREBASE_URL, payload.encode('utf8'), headers=headers)    
+        response = requests.post(FIREBASE_URL, payload.encode('utf8'), headers=headers)
 
     if response and response.status_code == 200:
         return response.json()
