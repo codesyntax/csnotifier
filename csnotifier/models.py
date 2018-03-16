@@ -9,9 +9,12 @@ import uuid
 class DeviceManager(models.Manager):
     def register_device(self, token):
         device_id = uuid.uuid4().get_hex().replace('-', '')
-        device = Device.objects.create(uuid=device_id,
-                                       token=token)
-        return device
+        device = Device.objects.filter(token=token).first()
+        if device is not None:
+            return device
+        else:
+            return Device.objects.create(uuid=device_id, token=token)
+
 
     def enabled(self):
         return super(DeviceManager, self).get_queryset().filter(enabled=True)
@@ -26,7 +29,7 @@ class DeviceManager(models.Manager):
         for device in Device.objects.enabled():
 
             d_tags = device.getTags()
-	    if d_tags is not None:
+            if d_tags is not None:
                 d_tags = d_tags.strip()
             else:
                 d_tags = u''
