@@ -5,6 +5,8 @@ from django.db import models
 import json
 import uuid
 
+
+
 class DeviceManager(models.Manager):
     def register_device(self, token):
         device_id = uuid.uuid4().get_hex().replace('-', '')
