@@ -4,7 +4,16 @@ Changelog
 0.13 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Notification title length 250 chars [Jatsu Argarate <jargarate@codesyntax.com>]
+
+- as [Jatsu Argarate <jargarate@codesyntax.com>]
+
+- as [Jatsu Argarate <jargarate@codesyntax.com>]
+
+-  [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- [ci skip] [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
 
 
 0.12 (2018-03-16)
