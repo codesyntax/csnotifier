@@ -80,7 +80,7 @@ class Device(models.Model):
 
 
 class Notification(models.Model):
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=250)
     desc = models.CharField(max_length=250, blank=True, null=True)
     extra_context = models.TextField(blank=True, null=True)
     tags = models.TextField(blank=True, null=True)
