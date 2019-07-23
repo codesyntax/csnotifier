@@ -47,7 +47,7 @@ class DeviceManager(models.Manager):
 class Device(models.Model):
     uuid = models.CharField(max_length=32, primary_key=True)
     token = models.CharField(max_length=250)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL)
     tags = models.TextField()
     enabled = models.BooleanField(default=True)
     added = models.DateTimeField(auto_now_add=True, blank=True)
